@@ -104,8 +104,7 @@ void replacePositive(int* matrix, int count) {
 int main(int argc, char** argv) {
 
 	MPI_Init(&argc, &argv);
-	/* Произведение суммы положительных элементов первой части вектора на сумму
-	отрицательных элементов второй части вектора. */
+	/* Lab 2. Task 2. */
 
 	int rank, grSize;
 
@@ -152,25 +151,21 @@ int main(int argc, char** argv) {
 	MPI_Reduce(sums, finalSum, 2, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 	if (rank == 0) {
-		cout << "Сумма положительных в левой половине : " << finalSum[0] << endl;
-		cout << "Cyммa отрицательных в правой половине : " << finalSum[1] << endl;
-		cout << "Искомое произведение : " << finalSum[0] * finalSum[1] << endl;
+		cout << "Left positive sum : " << finalSum[0] << endl;
+		cout << "Right negative sum: " << finalSum[1] << endl;
+		cout << "Left*Right : " << finalSum[0] * finalSum[1] << endl;
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
 	cout << "****************" << endl;
 	MPI_Barrier(MPI_COMM_WORLD);
 
-	/* Заменить в прямоугольной матрице все положительные элементы на ближайший по
-	строке отрицательный(при наличии).
-	(Можно было сделать проще, но необходимость освоить коллективные функции потребовала
-	сделать более запутанную реализацию)
+	/* Lab 3. Task 1.
 	*/
 
 	int matrix[M][Ni];
 	if (rank == 0) {
 		fillMatrixRange(matrix, 0, M);
-		
 
 		for (int i = 0; i < M; i++) {
 			matrix[i][N] = i;
@@ -200,8 +195,6 @@ int main(int argc, char** argv) {
 	if (rank == 0) {
 		int remainder = M % chunk;
 
-
-
 		while (remainder != 0) {
 			int tailRow = chunk * grSize;
 			int* tail = matrix[tailRow];
@@ -215,13 +208,6 @@ int main(int argc, char** argv) {
 		printMatrixRange(matrix, 0, M, rank);
 	}
 	
-
-	//int endRow = (rank == grSize - 1) ? maxRows : chunk;
-
-	//replacePositive(rowChunk, endRow);
-
-	//MPI_Gather(&matrix, N * maxRows, )
-
 	MPI_Finalize();
 
 }
